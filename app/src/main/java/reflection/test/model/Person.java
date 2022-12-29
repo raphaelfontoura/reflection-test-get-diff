@@ -1,9 +1,10 @@
 package reflection.test.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Person {
+public class Person implements Serializable {
 
     private String nome;
     private LocalDate aniversario;

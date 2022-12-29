@@ -63,7 +63,7 @@ public class App {
     }
 
     public static <T> boolean isNotEqual(T entityValue, T dtoValue) {
-        if (entityValue == null && dtoValue != null) {
+        if (entityValue == null && dtoValue != null || entityValue != null && dtoValue == null) {
             return true;
         }
         assert entityValue != null;
