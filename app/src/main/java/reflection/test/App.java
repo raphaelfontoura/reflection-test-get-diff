@@ -19,7 +19,7 @@ public class App {
         return "Hello World!";
     }
 
-    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static void main(String[] args) {
         System.out.println(new App().getGreeting());
 
         Person raphael = new Person();
@@ -30,34 +30,38 @@ public class App {
         raphaelAltera.setNome("Raphael C Fontoura");
         raphaelAltera.setAtivo(true);
 
-        Field[] declaredFields = raphael.getClass().getDeclaredFields();
-        for (Field field: declaredFields) {
-            String fieldName = field.getName();
-            String getMethod = "get" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
-            Method method = raphael.getClass().getMethod(getMethod);
-            Object invokeResult = method.invoke(raphael);
-            System.out.println(invokeResult);
-        }
-
-        if (! raphael.equals(raphaelAltera)) {
-            List<Changes> changes = new ArrayList<>();
+        try {
+            Field[] declaredFields = raphael.getClass().getDeclaredFields();
             for (Field field: declaredFields) {
                 String fieldName = field.getName();
                 String getMethod = "get" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
                 Method method = raphael.getClass().getMethod(getMethod);
-                Object entityResult = method.invoke(raphael);
-                Object otherResult = method.invoke(raphaelAltera);
-                if (isNotEqual(entityResult, otherResult)) {
-                    Changes change = new Changes();
-                    change.setField(fieldName);
-                    change.setOldValue(entityResult == null ? "-" : entityResult.toString());
-                    change.setNewValue(otherResult == null ? "-" : otherResult.toString());
-                    changes.add(change);
+                Object invokeResult = method.invoke(raphael);
+                System.out.println(invokeResult);
+            }
+
+            if (! raphael.equals(raphaelAltera)) {
+                List<Changes> changes = new ArrayList<>();
+                for (Field field: declaredFields) {
+                    String fieldName = field.getName();
+                    String getMethod = "get" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
+                    Method method = raphael.getClass().getMethod(getMethod);
+                    Object entityResult = method.invoke(raphael);
+                    Object otherResult = method.invoke(raphaelAltera);
+                    if (isNotEqual(entityResult, otherResult)) {
+                        Changes change = new Changes();
+                        change.setField(fieldName);
+                        change.setOldValue(entityResult == null ? "-" : entityResult.toString());
+                        change.setNewValue(otherResult == null ? "-" : otherResult.toString());
+                        changes.add(change);
+                    }
+                }
+                for (Changes change: changes) {
+                    System.out.println(change);
                 }
             }
-            for (Changes change: changes) {
-                System.out.println(change);
-            }
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException err) {
+            System.out.println(err.getMessage());
         }
 
     }
